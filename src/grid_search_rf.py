@@ -1,6 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn import svm, datasets
 import sklearn.model_selection as model_selection
 from sklearn.ensemble import RandomForestClassifier
 

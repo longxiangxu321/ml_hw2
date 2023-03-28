@@ -1,6 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn import svm, datasets
+from sklearn import svm
 import sklearn.model_selection as model_selection
 from refit_strategy import refit_strategy
 from sklearn.model_selection import GridSearchCV
