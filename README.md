@@ -31,15 +31,10 @@ hw2/
 
 ## Features Engineering
 
-- heightest elevation
-  - cars and fences have lower values
-- relative height
-  - cars and fences have lower values
+- height
 - length
 - width
 - bbox volume
-  - houses have larger values
-  - cars have lower values
 - eigen value1
 - eigen value 2
 

@@ -12,7 +12,6 @@ def calculate_features(array):
     pca.fit(points_centered)
     eigenvalues = pca.explained_variance_
 
-    heighest = np.max(array[:, 2])
     relative_height = np.max(array[:, 2]) - np.min(array[:, 2])
 
     width_temp = np.max(array[:, 0]) - np.min(array[:, 0])
@@ -22,7 +21,7 @@ def calculate_features(array):
 
     bbox_vol = width * relative_height * length
 
-    return np.array([heighest, relative_height, length, width, bbox_vol, eigenvalues[0], eigenvalues[1]])
+    return np.array([relative_height, length, width, bbox_vol, eigenvalues[0], eigenvalues[1]])
 
 
 def main():
