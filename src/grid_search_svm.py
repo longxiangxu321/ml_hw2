@@ -51,7 +51,7 @@ def main():
     # loop over the 500 files to generate input datasets
     l1 = []
     for i in range(500):
-        file_name = '../data/{:03d}.xyz'.format(i)
+        file_name = '../data/pcs/{:03d}.xyz'.format(i)
         # print(file_name)
         data = np.genfromtxt(file_name, usecols=[0, 1, 2])
         features = calculate_features(data)
@@ -78,8 +78,8 @@ def main():
     scores = ["accuracy", "balanced_accuracy"]
 
     tuned_parameters = [
-        {"kernel": ["rbf"], "gamma": [1e-3, 1e-4], "C": [1, 10, 100, 1000]},
-        {"kernel": ["poy"], "degree": [1, 2, 3, 4, 5], "C": [1, 10, 100, 1000]},
+        {"kernel": ["rbf"], "gamma": [1e-2, 1e-3, 1e-4, 1e-5], "C": [1, 10, 100, 1000]},
+        {"kernel": ["poly"], "degree": [1, 2, 3, 4], "C": [1, 10, 100, 1000]},
         {"kernel": ["linear"], "C": [1, 10, 100, 1000]},
     ]
 

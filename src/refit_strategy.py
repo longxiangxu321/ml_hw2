@@ -1,5 +1,5 @@
 import pandas as pd
-
+import os
 
 def print_dataframe(filtered_cv_results):
     """Pretty print for filtered dataframe"""
@@ -38,11 +38,16 @@ def refit_strategy(cv_results):
         The index of the best estimator as it appears in `cv_results`.
     """
     # print the info about the grid-search for the different scores
-    accuracy_threshold = 0.94
+    accuracy_threshold = 0.90
 
     cv_results_ = pd.DataFrame(cv_results)
     print("All grid-search results:")
     print_dataframe(cv_results_)
+
+    if os.path.isfile("../data/params_test/result.csv"):
+        cv_results_.to_csv("../data/params_test/result1.csv")
+    else:
+        cv_results_.to_csv("../data/params_test/result.csv")
 
     # Filter-out all results below the threshold
     high_accuracy_cv_results = cv_results_[

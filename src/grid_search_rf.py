@@ -52,7 +52,7 @@ def main():
     # loop over the 500 files to generate input datasets
     l1 = []
     for i in range(500):
-        file_name = '../data/{:03d}.xyz'.format(i)
+        file_name = '../data/pcs/{:03d}.xyz'.format(i)
         # print(file_name)
         data = np.genfromtxt(file_name, usecols=[0, 1, 2])
         features = calculate_features(data)
@@ -79,7 +79,7 @@ def main():
     scores = ["accuracy", "balanced_accuracy"]
 
     tuned_parameters = [
-        {'n_estimators': [10, 50, 100, 500], 'max_depth': [None, 5, 10, 20],
+        {'n_estimators': [10, 50, 100, 500], 'max_depth': [5, 10, 20, 50],
          'min_samples_split': [2, 5, 10],
          'min_samples_leaf': [1, 2, 4]},
     ]

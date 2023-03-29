@@ -160,13 +160,20 @@ def main():
 
     # the optimal kernel function for SVM, RF classifier
     svm = SVC(kernel='linear', C=100).fit(X_train, y_train)
-    rf = RandomForestClassifier(max_depth=20, min_samples_leaf=2, min_samples_split=10, n_estimators=50,
-                                random_state=42).fit(X_train, y_train)
+    rf = RandomForestClassifier(max_depth=10, min_samples_leaf=2, min_samples_split=10, n_estimators=100,
+                                random_state=42, n_jobs=16).fit(X_train, y_train)
+    # score train set
+    svm_train = svm.predict(X_train)
+    rf_train = rf.predict(X_train)
+    t1, t2, c1 = calculate_matric(y_train, svm_train)
+    t3, t4, c2 = calculate_matric(y_train, rf_train)
 
+    # score test set
     svm_pred = svm.predict(X_test)
     rf_pred = rf.predict(X_test)
     OA_svm, mA_svm, conf_svm = calculate_matric(y_test, svm_pred)
     OA_rf, mA_rf, conf_rf = calculate_matric(y_test, rf_pred)
+
 
     # train_test learning curve
     cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
@@ -178,6 +185,11 @@ def main():
     # show the subset features plot
     feature_visualisation(data_list)
 
+    print("Scoring on training set:")
+    print("For SVM, Overall Accuracy: {0}, Mean Accuracy: {1}".format(t1, t2))
+    print("For RF, Overall Accuracy: {0}, Mean Accuracy: {1}".format(t3, t4))
+
+    print("Scoring on test set:")
     print("For SVM, Overall Accuracy: {0}, Mean Accuracy: {1}".format(OA_svm, mA_svm))
     print("For RF, Overall Accuracy: {0}, Mean Accuracy: {1}".format(OA_rf, mA_rf))
 
