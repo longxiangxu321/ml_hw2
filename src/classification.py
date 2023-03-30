@@ -63,7 +63,7 @@ def calculate_matric(ylabel, ypred, classifier_nm, data_set):
 
 
 def feature_visualisation(array):
-    fig = plt.figure()
+    fig = plt.figure(figsize=(15, 6))
     fig.suptitle('Feature subset visualisation of 5 classes')
     colors = ['firebrick', 'grey', 'darkorange', 'dodgerblue', 'olivedrab']
     labels = ['building', 'car', 'fence', 'pole', 'tree']
@@ -104,8 +104,8 @@ def feature_visualisation(array):
 
 
 def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=1,
-                        train_sizes=np.linspace(.1, 1.0, 5)):
-    plt.figure()
+                        train_sizes=np.linspace(.1, 1.0, 10)):
+    plt.figure(figsize=(12, 9))
     plt.title(title)
     if ylim is not None:
         plt.ylim(*ylim)
