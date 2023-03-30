@@ -9,7 +9,9 @@ def significant_test(path, mode):
 
     # Split the data into dependent and independent variables
     if mode == "RF":
-        X = data[['param_max_depth', 'param_min_samples_leaf', 'param_min_samples_split', 'param_n_estimators']]
+        X = data[['param_max_depth', 'param_min_samples_leaf', 'param_min_samples_split', 'param_n_estimators', 'param_criterion']]
+        mapping = {'gini': 1, 'entropy': -1}
+        X['param_criterion'] = X['param_criterion'].replace(mapping)
         y = data['mean_test_balanced_accuracy']
         model = sm.OLS(y, sm.add_constant(X)).fit()
         print(model.summary())
@@ -38,8 +40,8 @@ def significant_test(path, mode):
 
 
 def main():
-    rf = "../data/params_test/result.csv"
-    svm = "../data/params_test/result1.csv"
+    rf = "../data/params_test/result_RF.csv"
+    svm = "../data/params_test/result_SVM.csv"
 
     print("Significant test for hyperparameters of RF:")
     significant_test(rf, mode="RF")

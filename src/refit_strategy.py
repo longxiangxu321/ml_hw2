@@ -44,10 +44,10 @@ def refit_strategy(cv_results):
     print("All grid-search results:")
     print_dataframe(cv_results_)
 
-    if os.path.isfile("../data/params_test/result.csv"):
-        cv_results_.to_csv("../data/params_test/result1.csv")
+    if "param_criterion" in cv_results_:
+        cv_results_.to_csv("../data/params_test/result_RF.csv")
     else:
-        cv_results_.to_csv("../data/params_test/result.csv")
+        cv_results_.to_csv("../data/params_test/result_SVM.csv")
 
     # Filter-out all results below the threshold
     high_accuracy_cv_results = cv_results_[

@@ -23,8 +23,8 @@ The project is to classify point cloud into 5 classes: 'building', 'car', 'fence
     │   │   ├── xxx.xyz
     │   │   └── 499.xyz
     │   └── params_test/
-    │       ├── result.csv
-    │       └── result1.csv
+    │       ├── result——SVM.csv
+    │       └── result_RF.csv
     └── src/
         ├── classification.py
         ├── grid_search_rf.py
@@ -35,14 +35,17 @@ The project is to classify point cloud into 5 classes: 'building', 'car', 'fence
 
 ```
 
-## Features Engineering
+## Feature Engineering
 
-- height
-- length
-- width
-- bbox volume
-- eigen value1
-- eigen value 2
+- Maximum height (H) 
+- Standard deviation of all point values of an object (Std)
+- Bounding box height (BH)
+- Bounding box length (BL)
+- Bounding box width (BW)
+- Bounding box volume (BVol)
+- Eigenvalue 1 ($\lambda 1$)
+- Planarity (P)
+- Sphericity (S)
 
 
 
@@ -61,7 +64,14 @@ Requirements:
 
 ### classification.py
 
-Run ***classification.py*** to classify the point cloud.
+Run ***classification.py*** to classify the point cloud. This program compute features, train models, and apply classification and evaulation.
+
+Change the parameter of `n_jobs` according to your cpu cores to speed up the processing:
+
+```
+plot_learning_curve(svm, 'Learning Curves (SVM, linear kernel, $C=100$)',
+                        data_list, label, cv=cv, n_jobs=16)
+```
 
 
 
@@ -70,6 +80,16 @@ Run ***classification.py*** to classify the point cloud.
 #### grid_search_rf.py/grid_search_svm.py 
 
 Run ***grid_search_rf.py*** and ***grid_search_svm.py*** to apply grid search to find the optimal hyperparameters.
+
+Change the parameter of `n_jobs` according to your cpu cores to speed up the searching:
+
+```
+grid_search = GridSearchCV(
+        svm.SVC(), tuned_parameters, scoring=scores, refit=refit_strategy, n_jobs=16
+    )
+```
+
+
 
 The hyperparameters in ***classification.py*** is selected from the two grid search results. The grid search strategies are defined in ***refit_strategy.py***.
 

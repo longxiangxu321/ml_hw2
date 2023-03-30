@@ -79,7 +79,7 @@ def main():
     scores = ["accuracy", "balanced_accuracy"]
 
     tuned_parameters = [
-        {'n_estimators': [10, 50, 100, 500], 'max_depth': [5, 10, 20, 50],
+        {'n_estimators': [10, 50, 100, 500], 'criterion':["gini", "entropy"], 'max_depth': [5, 10, 20, 50],
          'min_samples_split': [2, 5, 10],
          'min_samples_leaf': [1, 2, 4]},
     ]
