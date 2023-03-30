@@ -62,7 +62,7 @@ Requirements:
 
 
 
-### classification.py
+### main.py
 
 Run ***classification.py*** to classify the point cloud.
 
