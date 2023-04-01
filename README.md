@@ -37,12 +37,15 @@ The project is to classify point cloud into 5 classes: 'building', 'car', 'fence
 
 ## Features Engineering
 
-- height
-- length
-- width
+- object maximum height 
+- object points standard deviation
+- bbox height
+- bbox length
+- bbox width
 - bbox volume
 - eigen value1
-- eigen value 2
+- planarity  [( eigen value 2 - eigen value 3) / eigen value 1]
+- sphericity (eigen value 3 / eigen value 1)
 
 
 
@@ -59,7 +62,7 @@ Requirements:
 
 
 
-### classification.py
+### main.py
 
 Run ***classification.py*** to classify the point cloud.
 
