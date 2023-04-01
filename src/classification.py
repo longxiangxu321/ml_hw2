@@ -63,6 +63,7 @@ def calculate_matric(ylabel, ypred, classifier_nm, data_set):
 
 
 def feature_visualisation(array):
+    # 3D subsets
     fig = plt.figure(figsize=(15, 6))
     fig.suptitle('Feature subset visualisation of 5 classes')
     colors = ['firebrick', 'grey', 'darkorange', 'dodgerblue', 'olivedrab']
@@ -100,6 +101,33 @@ def feature_visualisation(array):
     ax.set_zlabel('x9: S')
 
     ax.legend()
+    plt.show()
+
+    # 2D subsets
+    fig = plt.figure(figsize=(9, 9), layout="constrained")
+    n = ['Height', 'Points std', 'Bbox volume', 'Bbox height', 'Bbox length', 'Bbox width', 'Lambda_1', 'Planarity',
+         'Sphericity']
+    la = ['H', 'Std', 'BVol', 'BH', 'BL', 'BW', '\u03BB 1', 'P', 'S']
+    position = [1, 4, 7, 2, 5, 8, 3, 6, 9]  # position of the subplots
+    for i in range(9):
+        ax = fig.add_subplot(3, 3, position[i])
+        ax.tick_params(axis='both', which='major', labelsize=8)
+        if (i + 1) % 3 == 0:
+            for k in range(5):
+                # ax.set_title('x1: {} - x2: {}'.format(n[i], n[i - 2]))
+                ax.scatter(array[100 * k:100 * (k + 1), i], array[100 * k:100 * (k + 1), i - 2],
+                           marker='o', c=colors[k], alpha=0.8, label=labels[k], s=6)
+                ax.set_xlabel('x1:{}'.format(la[i]))
+                ax.set_ylabel('x2:{}'.format(la[i - 2]))
+                ax.legend()
+        else:
+            for k in range(5):
+                # ax.set_title('x1: {} - x2: {}'.format(n[i], n[i + 1]))
+                ax.scatter(array[100 * k:100 * (k + 1), i], array[100 * k:100 * (k + 1), i + 1],
+                           marker='o', c=colors[k], alpha=0.8, label=labels[k], s=6)
+                ax.set_xlabel('x1:{}'.format(la[i]))
+                ax.set_ylabel('x2:{}'.format(la[i + 1]))
+        ax.legend()
     plt.show()
 
 
