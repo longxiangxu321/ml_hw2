@@ -5,9 +5,7 @@ import sklearn.model_selection as model_selection
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, balanced_accuracy_score, confusion_matrix
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import learning_curve, train_test_split, ShuffleSplit
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import learning_curve, ShuffleSplit
 
 
 def calculate_features(array):
@@ -51,7 +49,7 @@ def calculate_features(array):
     return np.array([highest_z, point_std, relative_height, length, width, bbox_vol, eigenvalues[0], planarity, sphericity])
 
 
-def calculate_matric(ylabel, ypred):
+def calculate_matric(ylabel, ypred, classifier_nm, data_set):
     OA = accuracy_score(ylabel, ypred)
     mA = balanced_accuracy_score(ylabel, ypred)
     class_names = [0, 1, 2, 3, 4]
@@ -59,50 +57,83 @@ def calculate_matric(ylabel, ypred):
     conf = confusion_matrix(ylabel, ypred, labels=class_names)
     disp = ConfusionMatrixDisplay(confusion_matrix=conf, display_labels = disp_names)
     disp.plot()
+    disp.ax_.set_title('Confusion matrix ({classifier}_{dataset})'.format(classifier=classifier_nm, dataset=data_set))
     plt.show()
     return OA, mA, conf
 
 
 def feature_visualisation(array):
-    fig = plt.figure()
+    # 3D subsets
+    fig = plt.figure(figsize=(15, 6))
     fig.suptitle('Feature subset visualisation of 5 classes')
     colors = ['firebrick', 'grey', 'darkorange', 'dodgerblue', 'olivedrab']
     labels = ['building', 'car', 'fence', 'pole', 'tree']
 
     ax = fig.add_subplot(131, projection='3d')
-    ax.title.set_text('highest_z & point_std & bbox_vol')
+    ax.title.set_text('x1: Height - x2: Points std - x3: Bbox volume')
+    ax.tick_params(axis='both', which='major', labelsize=8)
     for i in range(5):
         ax.scatter(array[100*i:100*(i+1), 0], array[100*i:100*(i+1), 1], array[100*i:100*(i+1), 5],
                    marker='o', c=colors[i], alpha=0.8, label=labels[i])
-    ax.set_xlabel('x1:highest z-value')
-    ax.set_ylabel('x2:point standard deviation')
-    ax.set_zlabel('x3:bounding box volume')
+
+    ax.set_xlabel('x1:H')
+    ax.set_ylabel('x2:Std')
+    ax.set_zlabel('x3:BVol')
 
     ax = fig.add_subplot(132, projection='3d')
-    ax.title.set_text('relative_height & length & width')
+    ax.title.set_text('x4:Bbox height - x5: Bbox length - x6: Bbox width')
+    ax.tick_params(axis='both', which='major', labelsize=8)
     for i in range(5):
         ax.scatter(array[100*i:100*(i+1), 2], array[100*i:100*(i+1), 3], array[100*i:100*(i+1), 4],
                    marker='o', c=colors[i], alpha=0.8, label=labels[i])
-    ax.set_xlabel('x1:relative_height')
-    ax.set_ylabel('x2:length')
-    ax.set_zlabel('x3:width')
+    ax.set_xlabel('x4:BH')
+    ax.set_ylabel('x5:BL')
+    ax.set_zlabel('x6:BW')
 
     ax = fig.add_subplot(133, projection='3d')
-    ax.title.set_text('lambda 1 & planarity & sphericity')
+    ax.title.set_text('x7: Lambda_1 - x8: Planarity - x9: Sphericity')
+    ax.tick_params(axis='both', which='major', labelsize=8)
     for i in range(5):
         ax.scatter(array[100*i:100*(i+1), 6], array[100*i:100*(i+1), 7], array[100*i:100*(i+1), 8],
                    marker='o', c=colors[i], alpha=0.8, label=labels[i])
-    ax.set_xlabel('x1:eigenvalue_lambda1')
-    ax.set_ylabel('x2:planarity')
-    ax.set_zlabel('x3:sphericity')
+    ax.set_xlabel('x7: \u03BB 1')
+    ax.set_ylabel('x8: P')
+    ax.set_zlabel('x9: S')
 
     ax.legend()
     plt.show()
 
+    # 2D subsets
+    fig = plt.figure(figsize=(9, 9), layout="constrained")
+    n = ['Height', 'Points std', 'Bbox volume', 'Bbox height', 'Bbox length', 'Bbox width', 'Lambda_1', 'Planarity',
+         'Sphericity']
+    la = ['H', 'Std', 'BVol', 'BH', 'BL', 'BW', '\u03BB 1', 'P', 'S']
+    position = [1, 4, 7, 2, 5, 8, 3, 6, 9]  # position of the subplots
+    for i in range(9):
+        ax = fig.add_subplot(3, 3, position[i])
+        ax.tick_params(axis='both', which='major', labelsize=8)
+        if (i + 1) % 3 == 0:
+            for k in range(5):
+                # ax.set_title('x1: {} - x2: {}'.format(n[i], n[i - 2]))
+                ax.scatter(array[100 * k:100 * (k + 1), i], array[100 * k:100 * (k + 1), i - 2],
+                           marker='o', c=colors[k], alpha=0.8, label=labels[k], s=6)
+                ax.set_xlabel('x1:{}'.format(la[i]))
+                ax.set_ylabel('x2:{}'.format(la[i - 2]))
+                ax.legend()
+        else:
+            for k in range(5):
+                # ax.set_title('x1: {} - x2: {}'.format(n[i], n[i + 1]))
+                ax.scatter(array[100 * k:100 * (k + 1), i], array[100 * k:100 * (k + 1), i + 1],
+                           marker='o', c=colors[k], alpha=0.8, label=labels[k], s=6)
+                ax.set_xlabel('x1:{}'.format(la[i]))
+                ax.set_ylabel('x2:{}'.format(la[i + 1]))
+        ax.legend()
+    plt.show()
+
 
 def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=1,
-                        train_sizes=np.linspace(.1, 1.0, 5)):
-    plt.figure()
+                        train_sizes=np.linspace(.1, 1.0, 10)):
+    plt.figure(figsize=(12, 9))
     plt.title(title)
     if ylim is not None:
         plt.ylim(*ylim)
@@ -117,24 +148,23 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=1,
     plt.grid()
     plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
                      train_scores_mean + train_scores_std, alpha=0.1,
-                     color="r")
+                     color='dodgerblue')
     plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
-                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
-    plt.plot(train_sizes, train_scores_mean, 'o-', color="r",
+                     test_scores_mean + test_scores_std, alpha=0.1, color='darkorange')
+    plt.plot(train_sizes, train_scores_mean, 'o-', color='dodgerblue',
              label="Training score")
-    plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
+    plt.plot(train_sizes, test_scores_mean, 'o-', color='darkorange',
              label="Cross-validation score")
 
     plt.legend(loc="best")
     return plt
 
 
-
 def main():
     # loop over the 500 files to generate input datasets
     l1 = []
     for i in range(500):
-        file_name = '../data/{:03d}.xyz'.format(i)
+        file_name = '../data/pcs/{:03d}.xyz'.format(i)
         # print(file_name)
         data = np.genfromtxt(file_name, usecols=[0, 1, 2])
         features = calculate_features(data)
@@ -165,22 +195,21 @@ def main():
     # score train set
     svm_train = svm.predict(X_train)
     rf_train = rf.predict(X_train)
-    t1, t2, c1 = calculate_matric(y_train, svm_train)
-    t3, t4, c2 = calculate_matric(y_train, rf_train)
+    t1, t2, c1 = calculate_matric(y_train, svm_train, "SVM", "train set")
+    t3, t4, c2 = calculate_matric(y_train, rf_train, "RF", "train set")
 
     # score test set
     svm_pred = svm.predict(X_test)
     rf_pred = rf.predict(X_test)
-    OA_svm, mA_svm, conf_svm = calculate_matric(y_test, svm_pred)
-    OA_rf, mA_rf, conf_rf = calculate_matric(y_test, rf_pred)
-
+    OA_svm, mA_svm, conf_svm = calculate_matric(y_test, svm_pred, "SVM", "test set")
+    OA_rf, mA_rf, conf_rf = calculate_matric(y_test, rf_pred, "RF", "test set")
 
     # train_test learning curve
     cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
     plot_learning_curve(svm, 'Learning Curves (SVM, linear kernel, $C=100$)',
                         data_list, label, cv=cv, n_jobs=16)
-    plot_learning_curve(rf, "Learning Curves RF($max_depth=20$, $min_samples_leaf=2$, $min_samples_split=10$, $n_estimators=50$, "
-                            "$random_state=42$)", data_list, label, cv=cv, n_jobs=16)
+    plot_learning_curve(rf, "Learning Curves RF($max depth=20$, $min samples leaf=2$, $min samples split=10$, "
+                            "$n estimators=50$, $random state=42$)", data_list, label, cv=cv, n_jobs=16)
 
     # show the subset features plot
     feature_visualisation(data_list)
