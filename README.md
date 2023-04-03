@@ -9,7 +9,7 @@ The project is to classify point cloud into 5 classes: 'building', 'car', 'fence
 ## Author
 
 - *Longxiang* *Xu* 5722918
-- *Bingshiuan* *Tsai* 5511464
+- *Bingshiuan* *Tsai* 5511461
 
 
 
